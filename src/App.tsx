@@ -10,7 +10,10 @@ import {
   Download, 
   ShieldCheck, 
   CloudCheck, 
-  AlertTriangle 
+  AlertTriangle,
+  Calculator,
+  Smartphone,
+  HardDrive
 } from 'lucide-react';
 import { 
   CompanyTaxProfile, 
@@ -41,12 +44,15 @@ import { GuidesManager } from './components/GuidesManager';
 import { ObligationsCalendar } from './components/ObligationsCalendar';
 import { ReportsView } from './components/ReportsView';
 import { AuditLogView } from './components/AuditLogView';
+import { TaxSimulationView } from './components/TaxSimulationView';
 import { RetentionCalculatorModal } from './components/RetentionCalculatorModal';
 import { ExcelManagerModal } from './components/ExcelManagerModal';
 import { AccountingSyncModal } from './components/AccountingSyncModal';
 import { RetentionCertificateModal } from './components/RetentionCertificateModal';
 import { DocumentViewerModal } from './components/DocumentViewerModal';
 import { UserRoleSwitcher } from './components/UserRoleSwitcher';
+import { MobileTestSetupModal } from './components/MobileTestSetupModal';
+import { PenDriveSetupModal } from './components/PenDriveSetupModal';
 
 export default function App() {
   // Theme state
@@ -98,7 +104,7 @@ export default function App() {
   const [company, setCompany] = useState<CompanyTaxProfile>(INITIAL_COMPANY);
   const [users, setUsers] = useState<UserProfile[]>(INITIAL_USERS);
   const [currentUser, setCurrentUser] = useState<UserProfile>(INITIAL_USERS[0]); // Eng. Carlos Mendes (Admin)
-  const [currentTab, setCurrentTab] = useState<'retencoes' | 'guias' | 'calendario' | 'relatorios' | 'auditoria'>('retencoes');
+  const [currentTab, setCurrentTab] = useState<'retencoes' | 'guias' | 'calendario' | 'relatorios' | 'simulacao' | 'auditoria'>('retencoes');
 
   const [entries, setEntries] = useState<RetentionEntry[]>(() => {
     try {
@@ -192,6 +198,9 @@ export default function App() {
   const [isExcelModalOpen, setIsExcelModalOpen] = useState(false);
   const [isAccountingModalOpen, setIsAccountingModalOpen] = useState(false);
   const [isUserSwitchOpen, setIsUserSwitchOpen] = useState(false);
+  const [isMobileSetupOpen, setIsMobileSetupOpen] = useState(false);
+  const [isMobilePreviewActive, setIsMobilePreviewActive] = useState(false);
+  const [isPenDriveOpen, setIsPenDriveOpen] = useState(false);
   const [certificateEntry, setCertificateEntry] = useState<RetentionEntry | null>(null);
   const [documentViewEntry, setDocumentViewEntry] = useState<RetentionEntry | null>(null);
 
@@ -417,6 +426,7 @@ export default function App() {
         onOpenNewRetentionModal={() => setIsNewRetentionOpen(true)}
         onOpenExcelModal={() => setIsExcelModalOpen(true)}
         onOpenUserSwitchModal={() => setIsUserSwitchOpen(true)}
+        onOpenMobileSetup={() => setIsMobileSetupOpen(true)}
         obligations={obligations}
       />
 
@@ -427,8 +437,28 @@ export default function App() {
         </div>
       )}
 
+      {/* Mobile Simulator Mode Banner if active on desktop */}
+      {isMobilePreviewActive && (
+        <div className="no-print max-w-md mx-auto my-3 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-300 dark:border-amber-800 flex items-center justify-between text-xs text-amber-900 dark:text-amber-200 shadow-sm">
+          <div className="flex items-center gap-2">
+            <Smartphone className="w-4 h-4 text-amber-600 shrink-0" />
+            <span><strong>Simulador Telemóvel Ativo (390px):</strong> Vista fiel para smartphone.</span>
+          </div>
+          <button
+            onClick={() => setIsMobilePreviewActive(false)}
+            className="px-2 py-1 text-[11px] font-bold bg-white dark:bg-neutral-900 rounded-md border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 transition-colors shrink-0"
+          >
+            Sair
+          </button>
+        </div>
+      )}
+
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className={`flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 transition-all duration-200 ${
+        isMobilePreviewActive 
+          ? 'max-w-[420px] border-x-4 border-y-8 border-neutral-800 dark:border-neutral-700 rounded-[44px] shadow-2xl bg-neutral-50 dark:bg-neutral-950 my-4 overflow-hidden' 
+          : 'max-w-7xl'
+      }`}>
         
         {/* Workspace Sub-Header Toolbar */}
         <div className="no-print flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-neutral-200 dark:border-neutral-800">
@@ -445,12 +475,40 @@ export default function App() {
               {currentTab === 'guias' && 'Guias de Arrecadação de Receitas (DAR & RUPE)'}
               {currentTab === 'calendario' && 'Calendário Tributário & Alertas de Vencimento'}
               {currentTab === 'relatorios' && 'Relatórios Fiscais Mensais & Declarações AGT'}
+              {currentTab === 'simulacao' && 'Simulação Fiscal Avançada & Comparativo de Regimes'}
               {currentTab === 'auditoria' && 'Registo de Atividades & Trilha de Auditoria'}
             </h1>
           </div>
 
           {/* Quick ERP & System Integrators */}
           <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setIsPenDriveOpen(true)}
+              className="px-3 py-2 text-xs font-semibold text-amber-900 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/60 rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
+              title="Versão portátil para gravar e partilhar em Pen Drive USB"
+            >
+              <HardDrive className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span>Versão Pen Drive USB</span>
+            </button>
+            <button
+              onClick={() => setIsMobileSetupOpen(true)}
+              className="px-3 py-2 text-xs font-semibold text-neutral-700 dark:text-neutral-200 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
+              title="Abrir no smartphone via QR Code ou instalar PWA"
+            >
+              <Smartphone className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span>Instalar no Telemóvel</span>
+            </button>
+            <button
+              onClick={() => setCurrentTab('simulacao')}
+              className={`px-3 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 shadow-xs ${
+                currentTab === 'simulacao'
+                  ? 'bg-amber-600 text-white'
+                  : 'text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 hover:bg-amber-100'
+              }`}
+            >
+              <Calculator className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span>Simulador de Regimes</span>
+            </button>
             <button
               onClick={() => setIsAccountingModalOpen(true)}
               className="px-3 py-2 text-xs font-semibold text-neutral-700 dark:text-neutral-200 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
@@ -536,7 +594,15 @@ export default function App() {
           />
         )}
 
-        {/* Tab 5: Segurança e Auditoria */}
+        {/* Tab 5: Simulação Fiscal de Regimes */}
+        {currentTab === 'simulacao' && (
+          <TaxSimulationView
+            company={company}
+            currentUser={currentUser}
+          />
+        )}
+
+        {/* Tab 6: Segurança e Auditoria */}
         {currentTab === 'auditoria' && (
           <AuditLogView
             logs={auditLogs}
@@ -612,6 +678,28 @@ export default function App() {
         onSelectUser={(u) => {
           setCurrentUser(u);
           addAuditLog('Troca de Utilizador', `Sessão alternada para ${u.name} (${u.roleTitle}).`, 'user');
+        }}
+      />
+
+      <MobileTestSetupModal
+        isOpen={isMobileSetupOpen}
+        onClose={() => setIsMobileSetupOpen(false)}
+        onToggleMobilePreviewMode={() => setIsMobilePreviewActive(!isMobilePreviewActive)}
+        isMobilePreviewActive={isMobilePreviewActive}
+      />
+
+      <PenDriveSetupModal
+        isOpen={isPenDriveOpen}
+        onClose={() => setIsPenDriveOpen(false)}
+        entries={entries}
+        guides={guides}
+        company={company}
+        auditLogs={auditLogs}
+        onRestoreBackup={(restored) => {
+          if (restored.entries) setEntries(restored.entries);
+          if (restored.guides) setGuides(restored.guides);
+          if (restored.company) setCompany(restored.company);
+          addAuditLog('Restauração de Dados', 'Backup restaurado com sucesso a partir de ficheiro USB.', 'config');
         }}
       />
 

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <!-- Background with safe zone -->
+  <rect width="512" height="512" rx="112" fill="url(#grad)" />
+  
+  <!-- Central Emblem -->
+  <g filter="url(#shadow)">
+    <!-- Building/Fiscal Emblem -->
+    <path d="M128 416V192L256 96L384 192V416H128Z" fill="#ffffff" />
+    <path d="M256 96L128 192V224L256 128L384 224V192L256 96Z" fill="#fef3c7" />
+    <!-- Pillars -->
+    <rect x="168" y="240" width="32" height="136" rx="6" fill="#d97706" />
+    <rect x="240" y="240" width="32" height="136" rx="6" fill="#d97706" />
+    <rect x="312" y="240" width="32" height="136" rx="6" fill="#d97706" />
+    <!-- Base step -->
+    <rect x="112" y="396" width="288" height="24" rx="4" fill="#78350f" />
+    <!-- Golden Seal -->
+    <circle cx="256" cy="180" r="22" fill="#d97706" />
+    <path d="M256 168V192M244 180H268" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>

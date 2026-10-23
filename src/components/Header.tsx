@@ -1,4 +1,3 @@
-import React from 'react';
 import { 
   Building2, 
   Moon, 
@@ -10,13 +9,15 @@ import {
   Plus, 
   FileSpreadsheet, 
   FileCheck, 
-  AlertTriangle 
+  AlertTriangle,
+  Calculator
 } from 'lucide-react';
 import { UserProfile, OfflineSyncItem, TaxObligation } from '../types/tax';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface HeaderProps {
-  currentTab: 'retencoes' | 'guias' | 'calendario' | 'relatorios' | 'auditoria';
-  setCurrentTab: (tab: 'retencoes' | 'guias' | 'calendario' | 'relatorios' | 'auditoria') => void;
+  currentTab: 'retencoes' | 'guias' | 'calendario' | 'relatorios' | 'simulacao' | 'auditoria';
+  setCurrentTab: (tab: 'retencoes' | 'guias' | 'calendario' | 'relatorios' | 'simulacao' | 'auditoria') => void;
   currentUser: UserProfile;
   isDarkMode: boolean;
   setIsDarkMode: (val: boolean) => void;
@@ -28,6 +29,7 @@ interface HeaderProps {
   onOpenNewRetentionModal: () => void;
   onOpenExcelModal: () => void;
   onOpenUserSwitchModal: () => void;
+  onOpenMobileSetup: () => void;
   obligations: TaxObligation[];
 }
 
@@ -45,6 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenNewRetentionModal,
   onOpenExcelModal,
   onOpenUserSwitchModal,
+  onOpenMobileSetup,
   obligations,
 }) => {
   const pendingCount = syncQueue.filter(q => q.status === 'pending').length;
@@ -115,6 +118,17 @@ export const Header: React.FC<HeaderProps> = ({
             >
               Relatórios & AGT
             </button>
+            <button
+              onClick={() => setCurrentTab('simulacao')}
+              className={`px-3 py-2 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
+                currentTab === 'simulacao'
+                  ? 'bg-neutral-100 dark:bg-neutral-800 text-amber-700 dark:text-amber-400'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
+              }`}
+            >
+              <Calculator className="w-3.5 h-3.5" />
+              <span>Simulação de Regimes</span>
+            </button>
             {currentUser.permissions.canViewAuditLog && (
               <button
                 onClick={() => setCurrentTab('auditoria')}
@@ -159,6 +173,9 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               )}
             </div>
+
+            {/* PWA Mobile Setup & Install Button */}
+            <PWAInstallButton onOpenMobileSetup={onOpenMobileSetup} />
 
             {/* Dark mode toggle */}
             <button

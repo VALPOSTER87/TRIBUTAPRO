@@ -1,6 +1,6 @@
 {
   "name": "TributaPro AGT - Gestão Fiscal & Retenções",
-  "description": "Sistema de gestão tributária automatizada, cálculo de retenções na fonte, emissão de guias DAR/RUPE da AGT, importação de planilhas Excel, exportação SAF-T, alertas de vencimento, suporte offline e controlo multiusuário.",
+  "description": "Sistema de gestão tributária automatizada, cálculo de retenções na fonte, emissão de guias DAR/RUPE da AGT, módulo de simulação fiscal avançado (Simples Nacional, Lucro Presumido, Lucro Real), importação de planilhas Excel, exportação SAF-T, alertas de vencimento, suporte offline e controlo multiusuário.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
